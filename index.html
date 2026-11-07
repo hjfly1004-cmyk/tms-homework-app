@@ -378,7 +378,6 @@ const PAGES = {
       '<div class="card soft"><h2>이렇게 적으면 돼요</h2>' +
         '<p>오전 · 늦잠, 휴대폰 보기 · 2점<br>오후 · 설거지, 동네 산책 · <b>4점</b><br>저녁 · 친구와 통화 · <b>5점</b></p>' +
         '<p class="note" style="color:inherit">작은 일도 적어 주세요. 기분이 조금 오른 순간을 찾는 게 이번 주 목표예요.</p></div>' +
-      '<div class="card"><h2>오늘 가장 잘 느껴진 감각</h2>' + chips('p.1.sense', ['눈 · 나뭇잎 그림','귀 · TMS 소리','손 · 마우스·키보드','잘 모르겠다'], { single:true }) + '</div>' +
       week(1, '일주일 기록표 · 한 일 / 기분 0~10점', function(b){
         return slot(b, 'am', '오전') + slot(b, 'pm', '오후') + slot(b, 'eve', '저녁') +
           '<div class="slot"><div class="lab">감각 1분</div>' + chips(b + '.sense', ['보기','듣기','만지기','맛보기']) + '</div>';
