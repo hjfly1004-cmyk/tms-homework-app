@@ -277,7 +277,7 @@ function score(path, label){
   return '<div class="field"><label>' + esc(label) + ' (0~10)</label>' + scoreSelect(path, label) + '</div>';
 }
 function tick(path, label){
-  const on = !!getv(path);
+  const on = hasContent(getv(path));
   return '<button type="button" class="tick' + (on ? ' on' : '') + '" aria-pressed="' + on + '" data-tog="' + path + '">' + esc(label) + '</button>';
 }
 function whenFields(n){
@@ -285,7 +285,7 @@ function whenFields(n){
 }
 
 // 일주일 표 밖에서 따로 체크하는 칸. 일주일 표의 '적음' 표시에는 넣지 않는다
-const OUTSIDE_WEEK = { 2:'breath' };
+const OUTSIDE_WEEK = { 1:'sense', 2:'breath', 3:'body' };
 function dayFilled(n, i){
   const log = Object.assign({}, getv('p.' + n + '.log.' + i));
   delete log[OUTSIDE_WEEK[n]];
@@ -395,15 +395,15 @@ const PAGES = {
         '<p>오전 · 늦잠, 휴대폰 보기 · 2점<br>오후 · 설거지, 동네 산책 · <b>4점</b><br>저녁 · 친구와 통화 · <b>5점</b></p>' +
         '<p class="note" style="color:inherit">작은 일도 적어 주세요. 기분이 조금 오른 순간을 찾는 게 이번 주 목표예요.</p></div>' +
       week(1, '일주일 기록표 · 한 일 / 기분 0~10점', function(b){
-        return slot(b, 'am', '오전') + slot(b, 'pm', '오후') + slot(b, 'eve', '저녁') +
-          '<div class="slot"><div class="lab">감각 1분</div>' + chips(b + '.sense', ['보기','듣기','만지기','맛보기']) + '</div>';
+        return slot(b, 'am', '오전') + slot(b, 'pm', '오후') + slot(b, 'eve', '저녁');
       }, '기분이 조금 나았던 칸에 ☆ 표시를 해 보세요. 다음 연습에서 활동을 고를 때 도움이 돼요.') +
       '<div class="card"><h2>집에서 하는 감각 1분 · 이렇게 해요</h2>' +
         '<div class="kv"><b>보기</b>창밖 하늘·구름, 화분 잎, 머그컵 무늬, 커튼에 비친 빛, 내 손바닥<span>색 · 모양 · 빛과 그림자를 처음 보듯</span></div>' +
         '<div class="kv"><b>듣기</b>냉장고 소리, 창밖 차·새 소리, 시계 초침, 빗소리, 설거지 물소리<span>가까운 소리 → 먼 소리, 시작과 멈춤</span></div>' +
         '<div class="kv"><b>만지기</b>따뜻한 머그컵, 손 씻을 때 물과 거품, 이불·옷감, 바닥에 닿은 발바닥<span>따뜻한지 · 차가운지, 매끈한지 · 거친지</span></div>' +
         '<div class="kv"><b>맛보기 (선택)</b>초콜릿, 건포도, 무설탕 사탕, 차 한 모금<span>천천히 · 맛과 질감이 변하는 과정</span></div>' +
-        '<p class="note"><b>언제?</b> 양치할 때, 커피 마실 때, 설거지할 때처럼 늘 하는 일에 1분을 붙이면 잊지 않아요. 마음이 딴 데 가면 알아차리고 돌아오면 돼요. 그게 연습이에요.</p></div>';
+        '<p class="note"><b>언제?</b> 양치할 때, 커피 마실 때, 설거지할 때처럼 늘 하는 일에 1분을 붙이면 잊지 않아요. 마음이 딴 데 가면 알아차리고 돌아오면 돼요. 그게 연습이에요.</p></div>' +
+      dailyTicks(1, 'sense', '감각 1분 일주일 체크표');
   },
 
   2: function(){
@@ -439,11 +439,10 @@ const PAGES = {
       '<div class="card"><h2>이번 주 과제</h2><ul class="plain">' +
         '<li>쪼갠 <b>1단계부터</b> 해 보기 · 막히면 정해 둔 대안 쓰기</li>' +
         '<li>하루 한 번 <b>바디스캔</b> 5분 — 의자에 앉아서, 또는 자기 전 누워서 발부터 머리까지</li></ul></div>' +
-      HOW_BODY +
-      week(3, '일주일 체크표', function(b){
-        return '<div class="ticks">' + tick(b + '.s1', '1단계') + tick(b + '.s2', '2단계') + tick(b + '.s3', '3단계') + tick(b + '.body', '바디스캔') + '</div>' +
+      week(3, '활동 일주일 체크표', function(b){
+        return '<div class="ticks">' + tick(b + '.s1', '1단계') + tick(b + '.s2', '2단계') + tick(b + '.s3', '3단계') + '</div>' +
           score(b + '.mood', '기분');
-      }, '1단계를 했다면 이미 성공이에요. 할 만하면 다음 단계로 넘어가 보세요.');
+      }, '1단계를 했다면 이미 성공이에요. 할 만하면 다음 단계로 넘어가 보세요.') + HOW_BODY + dailyTicks(3, 'body', '바디스캔 일주일 체크표');
   },
 
   4: function(){
@@ -477,12 +476,12 @@ const PAGES = {
         '<h3>그때 할 해냈다 싶은 일</h3>' + chips('p.5.copeM', ACT_MASTERY, { add:true }) +
         text('p.5.person', '연락할 사람', '') + '</div>' +
       '<div class="card soft"><h2>내 대처 순서</h2><p>조기경보 알아차리기 → <b>3분 마음챙김 명상</b> → 즐거운 일이나 해냈다 싶은 일 작게 시작하기 → 그래도 힘들면 사람에게 연락하기</p></div>' +
-      HOW_LABEL +
       '<div class="card"><h2>이어 갈 연습</h2>' + chips('p.5.keep', ['감각 1분 알아차리기','마음챙김 호흡','앉아서 하는 바디스캔','3분 마음챙김 명상','이름 붙이기 연습','활동 계획 세우기'], { add:true }) +
-        '<p class="note">하는 방법은 <a href="#p1">연습 1</a> 감각 1분, <a href="#p2">연습 2</a> 호흡, <a href="#p3">연습 3</a> 바디스캔, <a href="#p4">연습 4</a> 3분 명상에 있어요.</p></div>' +
+        '<p class="note">하는 방법은 <a href="#p1">연습 1</a> 감각 1분, <a href="#p2">연습 2</a> 호흡, <a href="#p3">연습 3</a> 바디스캔, <a href="#p4">연습 4</a> 3분 명상에 있어요. 이름 붙이기는 이 화면 아래에 있어요.</p></div>' +
       '<div class="card"><h2>이번 주 과제</h2><ul class="plain">' +
         '<li>이 화면의 대처 카드를 <b>휴대폰으로 찍어</b> 저장해 두기</li>' +
         '<li>고른 연습을 <b>하루 한 번</b> 이어 가기 (정해 둔 시간에 알람을 맞춰 두면 좋아요)</li></ul></div>' +
+      HOW_LABEL +
       week(5, '일주일 기록', function(b){
         return '<div class="lab">고른 연습</div>' +
           (keep.length ? chips(b + '.done', keep, { only:true }) : '<p class="hint">위에서 이어 갈 연습을 고르면 여기에 나와요.</p>') +
@@ -567,7 +566,7 @@ document.addEventListener('click', function(e){
   if(!t) return;
   if(t.dataset.add){ addValue(t.dataset.add); return; }
   if(t.dataset.fill){ setv(t.dataset.fill, t.dataset.v); rerender(); return; }
-  if(t.dataset.tog){ setv(t.dataset.tog, !getv(t.dataset.tog)); rerender(); return; }
+  if(t.dataset.tog){ setv(t.dataset.tog, !hasContent(getv(t.dataset.tog))); rerender(); return; }
 
   const path = t.dataset.chip, v = t.dataset.v;
   if(t.dataset.single){
