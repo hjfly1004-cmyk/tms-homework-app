@@ -284,6 +284,14 @@ function whenFields(n){
   return '<h3>요일</h3>' + chips('p.' + n + '.days', DAYS) + '<h3>때</h3>' + chips('p.' + n + '.times', TIMES);
 }
 
+// 일주일 표 밖에서 따로 체크하는 칸. 일주일 표의 '적음' 표시에는 넣지 않는다
+const OUTSIDE_WEEK = { 2:'breath' };
+function dayFilled(n, i){
+  const log = Object.assign({}, getv('p.' + n + '.log.' + i));
+  delete log[OUTSIDE_WEEK[n]];
+  return hasContent(log);
+}
+
 function hasContent(v){
   if(Array.isArray(v)) return v.length > 0;
   if(v && typeof v === 'object') return Object.keys(v).some(function(k){ return hasContent(v[k]); });
@@ -303,7 +311,7 @@ function week(n, title, dayFn, foot){
   for(let i = 0; i < 7; i++){
     const d = dayAt(start, i);
     const isToday = fmt(d) === now;
-    const filled = hasContent(getv('p.' + n + '.log.' + i));
+    const filled = dayFilled(n, i);
     rows += '<details class="day' + (isToday ? ' today' : '') + '" data-day="' + n + '.' + i + '"' + (i === openAt ? ' open' : '') + '>' +
       '<summary>' + WEEKDAY[d.getDay()] + ' <span class="d">' + (d.getMonth() + 1) + '/' + d.getDate() + '</span>' +
       (isToday ? '<span class="tag">오늘</span>' : '') +
@@ -313,6 +321,18 @@ function week(n, title, dayFn, foot){
   return '<div class="card"><h2>' + esc(title) + '</h2>' +
     '<div class="field"><label>시작한 날</label><input type="date" aria-label="시작한 날" data-start="' + n + '" value="' + esc(start) + '"></div>' +
     rows + (foot ? '<p class="note">' + esc(foot) + '</p>' : '') + '</div>';
+}
+
+function dailyTicks(n, key, title){
+  const start = getv('p.' + n + '.start') || today();
+  const now = today();
+  let html = '';
+  for(let i = 0; i < 7; i++){
+    const d = dayAt(start, i);
+    html += tick('p.' + n + '.log.' + i + '.' + key,
+      WEEKDAY[d.getDay()] + ' ' + (d.getMonth() + 1) + '/' + d.getDate() + (fmt(d) === now ? ' · 오늘' : ''));
+  }
+  return '<div class="card"><h2>' + esc(title) + '</h2><div class="ticks">' + html + '</div></div>';
 }
 
 /* ===== 마음챙김 연습 방법 =====
@@ -402,13 +422,11 @@ const PAGES = {
         '<li>계획한 활동 해 보기 → 끝나고 <b>즐거움 · 뿌듯함</b>을 0~10점으로 적기</li>' +
         '<li>하루 한 번 <b>마음챙김 호흡</b> 5~10분 — 아침에 일어나 침대에 앉아서, 또는 자기 전 (아래 그림)</li></ul>' +
         '<p class="note">기분이 좋아질 때까지 기다리지 말고, 먼저 작게 움직여 보세요.</p></div>' +
-      HOW_BREATH +
-      week(2, '일주일 체크표', function(b){
+      week(2, '활동 일주일 체크표', function(b){
         return '<div class="lab">활동 했나요</div>' + chips(b + '.did', ['○','✕'], { single:true }) +
           '<div class="two" style="margin-top:8px">' + score(b + '.joy', '즐거움') + score(b + '.pride', '뿌듯함') + '</div>' +
-          '<div class="ticks">' + tick(b + '.breath', '마음챙김 호흡') + '</div>' +
           text(b + '.block', '못 했다면 무엇이 막았나요', '예) 힘이 없었다, 잊어버렸다');
-      });
+      }) + HOW_BREATH + dailyTicks(2, 'breath', '마음챙김 호흡 일주일 체크표');
   },
 
   3: function(){
@@ -574,7 +592,7 @@ function onField(e){
   const day = el.closest('details.day');
   if(day){
     const k = day.dataset.day.split('.');
-    day.querySelector('.mark').textContent = hasContent(getv('p.' + k[0] + '.log.' + k[1])) ? '적음' : '';
+    day.querySelector('.mark').textContent = dayFilled(k[0], k[1]) ? '적음' : '';
   }
 }
 document.addEventListener('input', onField);
