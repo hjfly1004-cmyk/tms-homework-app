@@ -280,10 +280,6 @@ function tick(path, label){
   const on = !!getv(path);
   return '<button type="button" class="tick' + (on ? ' on' : '') + '" aria-pressed="' + on + '" data-tog="' + path + '">' + esc(label) + '</button>';
 }
-function checkDate(n){
-  return '<div class="card"><div class="field" style="margin:0"><label>담당 선생님 확인</label>' +
-    '<input type="date" aria-label="담당 선생님 확인 날짜" data-path="p.' + n + '.checked" value="' + esc(getv('p.' + n + '.checked')) + '"></div></div>';
-}
 function whenFields(n){
   return '<h3>요일</h3>' + chips('p.' + n + '.days', DAYS) + '<h3>때</h3>' + chips('p.' + n + '.times', TIMES);
 }
@@ -387,8 +383,7 @@ const PAGES = {
         '<div class="kv"><b>듣기</b>냉장고 소리, 창밖 차·새 소리, 시계 초침, 빗소리, 설거지 물소리<span>가까운 소리 → 먼 소리, 시작과 멈춤</span></div>' +
         '<div class="kv"><b>만지기</b>따뜻한 머그컵, 손 씻을 때 물과 거품, 이불·옷감, 바닥에 닿은 발바닥<span>따뜻한지 · 차가운지, 매끈한지 · 거친지</span></div>' +
         '<div class="kv"><b>맛보기 (선택)</b>초콜릿, 건포도, 무설탕 사탕, 차 한 모금<span>천천히 · 맛과 질감이 변하는 과정</span></div>' +
-        '<p class="note"><b>언제?</b> 양치할 때, 커피 마실 때, 설거지할 때처럼 늘 하는 일에 1분을 붙이면 잊지 않아요. 마음이 딴 데 가면 알아차리고 돌아오면 돼요. 그게 연습이에요.</p></div>' +
-      checkDate(1);
+        '<p class="note"><b>언제?</b> 양치할 때, 커피 마실 때, 설거지할 때처럼 늘 하는 일에 1분을 붙이면 잊지 않아요. 마음이 딴 데 가면 알아차리고 돌아오면 돼요. 그게 연습이에요.</p></div>';
   },
 
   2: function(){
@@ -413,7 +408,7 @@ const PAGES = {
           '<div class="two" style="margin-top:8px">' + score(b + '.joy', '즐거움') + score(b + '.pride', '뿌듯함') + '</div>' +
           '<div class="ticks">' + tick(b + '.breath', '마음챙김 호흡') + '</div>' +
           text(b + '.block', '못 했다면 무엇이 막았나요', '예) 힘이 없었다, 잊어버렸다');
-      }) + checkDate(2);
+      });
   },
 
   3: function(){
@@ -430,7 +425,7 @@ const PAGES = {
       week(3, '일주일 체크표', function(b){
         return '<div class="ticks">' + tick(b + '.s1', '1단계') + tick(b + '.s2', '2단계') + tick(b + '.s3', '3단계') + tick(b + '.body', '바디스캔') + '</div>' +
           score(b + '.mood', '기분');
-      }, '1단계를 했다면 이미 성공이에요. 할 만하면 다음 단계로 넘어가 보세요.') + checkDate(3);
+      }, '1단계를 했다면 이미 성공이에요. 할 만하면 다음 단계로 넘어가 보세요.');
   },
 
   4: function(){
@@ -453,7 +448,7 @@ const PAGES = {
         return '<div class="ticks">' + tick(b + '.m1', '아침') + tick(b + '.m2', '점심') + tick(b + '.m3', '저녁') + '</div>' +
           '<div class="field"><label>반복되는 생각 알아차림 (번)</label><input type="number" min="0" inputmode="numeric" aria-label="반복되는 생각 알아차린 횟수" data-path="' + b + '.count" value="' + esc(getv(b + '.count')) + '"></div>' +
           text(b + '.moved', '옮겨 간 일', '예) 5분 걷기');
-      }, "'옮겨 간 일'에는 되새김을 알아차리고 실제로 한 일을 짧게 적어요.") + checkDate(4);
+      }, "'옮겨 간 일'에는 되새김을 알아차리고 실제로 한 일을 짧게 적어요.");
   },
 
   5: function(){
@@ -474,7 +469,7 @@ const PAGES = {
         return '<div class="lab">고른 연습</div>' +
           (keep.length ? chips(b + '.done', keep, { only:true }) : '<p class="hint">위에서 이어 갈 연습을 고르면 여기에 나와요.</p>') +
           score(b + '.mood', '기분') + text(b + '.note', '메모', '');
-      }) + checkDate(5);
+      });
   }
 };
 
