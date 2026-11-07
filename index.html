@@ -125,8 +125,8 @@
   .kv span{display:block;font-size:14.5px;color:var(--sub)}
   .pair{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;font-size:15px}
   .pair b{color:var(--paleink)}
-  .pager{display:flex;gap:8px;margin-top:14px}
-  .pager a{flex:1;text-align:center;padding:12px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font-weight:700;font-size:14.5px;text-decoration:none}
+  .pager{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;margin-top:14px}
+  .pager a{text-align:center;padding:12px;border-radius:12px;border:1.5px solid var(--line);background:#fff;font-weight:700;font-size:14.5px;text-decoration:none}
 
   /* 마음챙김 그림은 뒤쪽 모음이 아니라 그 과제 바로 아래에 둔다 */
   .figs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;text-align:center}
@@ -517,11 +517,11 @@ function homeHTML(){
 
 function practiceHTML(n){
   const p = PRACTICES[n - 1];
-  const prev = n > 1 ? '<a href="#p' + (n - 1) + '">← 연습 ' + (n - 1) + '</a>' : '';
-  const next = n < 5 ? '<a href="#p' + (n + 1) + '">연습 ' + (n + 1) + ' →</a>' : '';
+  const prev = n > 1 ? '<a href="#p' + (n - 1) + '">← 연습 ' + (n - 1) + '</a>' : '<span></span>';
+  const next = n < 5 ? '<a href="#p' + (n + 1) + '">연습 ' + (n + 1) + ' →</a>' : '<span></span>';
   return '<div class="top"><a href="#">← 처음으로</a><b>연습 ' + n + '</b></div>' +
     '<div class="page-title"><small>연습 ' + n + '</small><h1>' + esc(p.title) + '</h1><p>' + esc(p.sub) + '</p></div>' +
-    PAGES[n]() + '<div class="pager">' + prev + next + '</div><div style="height:12px"></div>' + FOOT;
+    PAGES[n]() + '<div class="pager">' + prev + '<a href="#">홈</a>' + next + '</div><div style="height:12px"></div>' + FOOT;
 }
 
 function memoHTML(){
